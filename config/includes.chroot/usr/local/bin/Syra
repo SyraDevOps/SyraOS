@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+import os
+print("SyraOS v1.0")
+print("Welcome to SyraOS.")
+while True:
+    try:
+        command = input("Syra> ").strip()
+        if command == "Syra --hello":
+            print("OK")
+        elif command in ("poweroff", "shutdown"):
+            os.system("poweroff")
+        elif command == "exit":
+            break
+        elif command:
+            print(f"Command not found: {command}")
+    except KeyboardInterrupt:
+        print()
