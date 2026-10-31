@@ -13,26 +13,33 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y live-build
+          sudo apt-get install -y live-build debootstrap debian-archive-keyring ca-certificates
 
       - name: Configure Debian Live
         run: |
           sudo lb config \
+            --ignore-system-defaults \
             --distribution trixie \
-            --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
-            --debian-installer none
+            --binary-images iso-hybrid \
+            --debian-installer none \
+            --mirror-bootstrap https://deb.debian.org/debian/ \
+            --mirror-chroot https://deb.debian.org/debian/ \
+            --mirror-chroot-security https://security.debian.org/debian-security/ \
+            --mirror-binary https://deb.debian.org/debian/ \
+            --mirror-binary-security https://security.debian.org/debian-security/
 
       - name: Build ISO
         run: sudo lb build
 
       - name: Upload ISO
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: SyraOS-ISO
           path: live-image-amd64.hybrid.iso
+          if-no-files-found: error
